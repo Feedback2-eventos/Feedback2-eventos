@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "653394184871",
+    "project_id": "gestion-de-energia-eventos",
+    "storage_bucket": "gestion-de-energia-eventos.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:653394184871:android:af3bbabe6bf94971776982",
+        "android_client_info": {
+          "package_name": "com.example.feedback2_eventos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjnwqXA5E_IOuALtiYCk2BVYzVK1VqLzI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
