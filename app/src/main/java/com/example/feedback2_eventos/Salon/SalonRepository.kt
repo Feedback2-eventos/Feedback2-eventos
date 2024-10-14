@@ -1,4 +1,4 @@
-package com.example.feedback2_eventos
+package com.example.feedback2_eventos.Salon
 
 import com.google.firebase.firestore.FirebaseFirestore
 import android.util.Log

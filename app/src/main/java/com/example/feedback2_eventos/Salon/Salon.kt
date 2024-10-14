@@ -1,5 +1,7 @@
 // app/src/main/java/com/example/feedback2_eventos/Salon.kt
-package com.example.feedback2_eventos
+package com.example.feedback2_eventos.Salon
+
+import com.example.feedback2_eventos.Dispositivo
 
 data class Salon(
 
