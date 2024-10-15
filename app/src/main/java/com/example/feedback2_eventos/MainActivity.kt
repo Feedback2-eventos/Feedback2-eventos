@@ -54,7 +54,8 @@ fun MainContent(modifier: Modifier = Modifier) {
             dormitorio = dormitorio,
             onShowSalonConsumo = { /* Implementar lógica para mostrar consumo del salón */ },
             onShowCocinaConsumo = { /* Implementar lógica para mostrar consumo de la cocina */ },
-            onShowDormitorioConsumo = { /* Implementar lógica para mostrar consumo del dormitorio */ }
+            onShowDormitorioConsumo = { /* Implementar lógica para mostrar consumo del dormitorio */ },
+            onBack = { showMenuScreen = false }
         )
     } else {
         Column(modifier = modifier.padding(16.dp)) {
@@ -68,6 +69,10 @@ fun MainContent(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(8.dp))
             Button(onClick = { showDormitorioForm = true }) {
                 Text("Añadir Dormitorio")
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(onClick = { showMenuScreen = true }) {
+                Text("Ir al MenuScreen")
             }
 
             if (showSalonForm) {

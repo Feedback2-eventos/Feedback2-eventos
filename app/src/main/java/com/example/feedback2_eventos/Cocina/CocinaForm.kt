@@ -15,7 +15,6 @@ fun CocinaForm(onSubmit: (Cocina) -> Unit) {
     var tieneNevera by remember { mutableStateOf(false) }
     var tieneHorno by remember { mutableStateOf(false) }
     var tieneVitroceramica by remember { mutableStateOf(false) }
-    var encendido by remember { mutableStateOf(false) }
 
     LazyColumn(modifier = Modifier.padding(16.dp)) {
         item {
@@ -35,14 +34,9 @@ fun CocinaForm(onSubmit: (Cocina) -> Unit) {
                 Text("Tiene Vitrocerámica")
                 Switch(checked = tieneVitroceramica, onCheckedChange = { tieneVitroceramica = it })
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("Encendido")
-                Switch(checked = encendido, onCheckedChange = { encendido = it })
-            }
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = {
-                val cocina = Cocina(nombre = nombre, tieneNevera = tieneNevera, tieneHorno = tieneHorno, tieneVitroceramica = tieneVitroceramica, encendido = encendido)
+                val cocina = Cocina(nombre = nombre, tieneNevera = tieneNevera, tieneHorno = tieneHorno, tieneVitroceramica = tieneVitroceramica, encendido = false)
                 onSubmit(cocina)
             }) {
                 Text("Aceptar")
