@@ -6,7 +6,8 @@ data class Dormitorio(
     var tieneAltavoces: Boolean,
     var tieneLamparilla: Boolean,
     var tieneOrdenador: Boolean,
-    var encendido: Boolean
+    var encendido: Boolean,
+    var valorPeligroso: Double = 0.0
 ) {
     fun consumo(): Double {
         var consumoTotal = 0.0

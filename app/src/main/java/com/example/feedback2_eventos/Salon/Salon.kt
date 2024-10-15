@@ -6,13 +6,14 @@ data class Salon(
     var tieneLampara: Boolean,
     var tieneTelevision: Boolean,
     var tieneAireAcondicionado: Boolean,
-    var encendido: Boolean
+    var encendido: Boolean,
+    var valorPeligroso: Double = 0.0
 ) {
     fun consumo(): Double {
         var consumoTotal = 0.0
-        if (tieneLampara) consumoTotal += 10.0 // Ejemplo de consumo
-        if (tieneTelevision) consumoTotal += 20.0 // Ejemplo de consumo
-        if (tieneAireAcondicionado) consumoTotal += 30.0 // Ejemplo de consumo
+        if (tieneLampara) consumoTotal += 10.0
+        if (tieneTelevision) consumoTotal += 20.0
+        if (tieneAireAcondicionado) consumoTotal += 30.0
         return consumoTotal
     }
 }

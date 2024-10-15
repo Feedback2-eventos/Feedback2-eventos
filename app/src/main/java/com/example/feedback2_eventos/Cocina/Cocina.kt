@@ -8,7 +8,9 @@ data class Cocina(
     var tieneNevera: Boolean,
     var tieneHorno: Boolean,
     var tieneVitroceramica: Boolean,
-    var encendido: Boolean
+    var encendido: Boolean,
+    var valorPeligroso: Double = 0.0
+
 ) {
     private var consumoTotal = 0.0
     private var consumoTask: ConsumoTask? = null

@@ -1,6 +1,7 @@
 // app/src/main/java/com/example/feedback2_eventos/MenuScreen.kt
 package com.example.feedback2_eventos
 
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -20,7 +21,8 @@ fun MenuScreen(
     onShowSalonConsumo: () -> Unit,
     onShowCocinaConsumo: () -> Unit,
     onShowDormitorioConsumo: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    context: Context
 ) {
     var showSalonConsumo by remember { mutableStateOf(false) }
     var showCocinaConsumo by remember { mutableStateOf(false) }
@@ -30,8 +32,11 @@ fun MenuScreen(
 
     LaunchedEffect(cocinaEncendido) {
         while (cocinaEncendido) {
+            delay(5000)
             cocinaConsumo = cocina?.consumo() ?: 0.0
-            delay(1000) // Update the UI every second
+            if (cocinaConsumo > (cocina?.valorPeligroso ?: Double.MAX_VALUE)) {
+                sendNotification(context, "Cocina", cocinaConsumo)
+            }
         }
     }
 
