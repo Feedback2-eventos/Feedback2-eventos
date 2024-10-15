@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/feedback2_eventos/StartScreen.kt
 package com.example.feedback2_eventos
 
 import androidx.compose.foundation.layout.*
@@ -45,18 +44,24 @@ fun StartScreen(onStart: (Boolean, String) -> Unit) {
             onClick = {
                 loading = true
                 errorMessage = null
-                val newUser = Usuario(nombre = username, contraseña = password)
-                db.collection("usuarios")
-                    .document(username)
-                    .set(newUser)
-                    .addOnSuccessListener {
+                checkIfUserExists(db, username) { exists ->
+                    if (exists) {
+                        errorMessage = "El nombre de usuario ya existe"
                         loading = false
-                        onStart(true, username)
+                    } else {
+                        val newUser = Usuario(nombre = username, contraseña = password)
+                        db.collection("usuarios")
+                            .document(username)
+                            .set(newUser)
+                            .addOnSuccessListener {
+                                checkUserCocinas(db, username, onStart)
+                            }
+                            .addOnFailureListener { e ->
+                                errorMessage = "Error al registrar el usuario: ${e.message}"
+                                loading = false
+                            }
                     }
-                    .addOnFailureListener { e ->
-                        loading = false
-                        errorMessage = e.message
-                    }
+                }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -67,24 +72,7 @@ fun StartScreen(onStart: (Boolean, String) -> Unit) {
             onClick = {
                 loading = true
                 errorMessage = null
-                db.collection("usuarios")
-                    .whereEqualTo("nombre", username)
-                    .whereEqualTo("contraseña", password)
-                    .get()
-                    .addOnSuccessListener { documents ->
-                        loading = false
-                        if (!documents.isEmpty) {
-                            val user = documents.documents.first().toObject(Usuario::class.java)
-                            val hasCocinas = user?.cocinas?.isNotEmpty() == true
-                            onStart(hasCocinas, username)
-                        } else {
-                            errorMessage = "Usuario o contraseña incorrectos"
-                        }
-                    }
-                    .addOnFailureListener { e ->
-                        loading = false
-                        errorMessage = e.message
-                    }
+                checkUserCocinas(db, username, onStart)
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -99,4 +87,31 @@ fun StartScreen(onStart: (Boolean, String) -> Unit) {
             Text(text = it, color = MaterialTheme.colorScheme.error)
         }
     }
+}
+
+private fun checkIfUserExists(db: FirebaseFirestore, username: String, callback: (Boolean) -> Unit) {
+    db.collection("usuarios")
+        .document(username)
+        .get()
+        .addOnSuccessListener { document ->
+            callback(document.exists())
+        }
+        .addOnFailureListener { e ->
+            // Handle error if needed
+            callback(false)
+        }
+}
+
+private fun checkUserCocinas(db: FirebaseFirestore, username: String, onStart: (Boolean, String) -> Unit) {
+    db.collection("usuarios")
+        .document(username)
+        .get()
+        .addOnSuccessListener { document ->
+            val user = document.toObject(Usuario::class.java)
+            val hasCocinas = user?.cocinas?.isNotEmpty() == true
+            onStart(hasCocinas, username)
+        }
+        .addOnFailureListener { e ->
+            // Handle error if needed
+        }
 }
