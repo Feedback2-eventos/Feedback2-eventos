@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/feedback2_eventos/Cocina/CocinaForm.kt
 package com.example.feedback2_eventos.Cocina
 
 import androidx.compose.foundation.layout.*
@@ -8,9 +7,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.feedback2_eventos.Usuario.UsuarioRepository
 
 @Composable
-fun CocinaForm(onSubmit: (Cocina) -> Unit) {
+fun CocinaForm(username: String, onSubmit: (Cocina) -> Unit) {
     var nombre by remember { mutableStateOf("") }
     var tieneNevera by remember { mutableStateOf(false) }
     var tieneHorno by remember { mutableStateOf(false) }
@@ -37,6 +37,8 @@ fun CocinaForm(onSubmit: (Cocina) -> Unit) {
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = {
                 val cocina = Cocina(nombre = nombre, tieneNevera = tieneNevera, tieneHorno = tieneHorno, tieneVitroceramica = tieneVitroceramica, encendido = false)
+                val usuarioRepository = UsuarioRepository()
+                usuarioRepository.agregarCocinaAUsuario(username, cocina)
                 onSubmit(cocina)
             }) {
                 Text("Aceptar")

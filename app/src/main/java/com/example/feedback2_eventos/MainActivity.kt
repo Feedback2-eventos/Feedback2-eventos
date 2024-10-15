@@ -1,16 +1,11 @@
-// app/src/main/java/com/example/feedback2_eventos/MainActivity.kt
 package com.example.feedback2_eventos
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -31,14 +26,26 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Feedback2eventosTheme {
-                MainContent()
+                var showStartScreen by remember { mutableStateOf(true) }
+                var hasCocinas by remember { mutableStateOf(false) }
+                var username by remember { mutableStateOf("") }
+
+                if (showStartScreen) {
+                    StartScreen(onStart = { hasCocinasResult, user ->
+                        hasCocinas = hasCocinasResult
+                        username = user
+                        showStartScreen = false
+                    })
+                } else {
+                    MainContent(hasCocinas = hasCocinas, username = username)
+                }
             }
         }
     }
 }
 
 @Composable
-fun MainContent(modifier: Modifier = Modifier) {
+fun MainContent(modifier: Modifier = Modifier, hasCocinas: Boolean, username: String) {
     var showSalonForm by remember { mutableStateOf(false) }
     var showCocinaForm by remember { mutableStateOf(false) }
     var showDormitorioForm by remember { mutableStateOf(false) }
@@ -60,49 +67,31 @@ fun MainContent(modifier: Modifier = Modifier) {
     } else {
         Column(modifier = modifier.padding(16.dp)) {
             Button(onClick = { showSalonForm = true }) {
-                Text("Añadir Salón")
+                Text("Agregar Salón")
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = { showCocinaForm = true }) {
-                Text("Añadir Cocina")
+            Button(onClick = { showCocinaForm = true }, enabled = !hasCocinas) {
+                Text("Agregar Cocina")
             }
             Spacer(modifier = Modifier.height(8.dp))
             Button(onClick = { showDormitorioForm = true }) {
-                Text("Añadir Dormitorio")
+                Text("Agregar Dormitorio")
             }
             Spacer(modifier = Modifier.height(8.dp))
             Button(onClick = { showMenuScreen = true }) {
-                Text("Ir al MenuScreen")
+                Text("Mostrar Menú")
             }
 
             if (showSalonForm) {
-                SalonForm(onSubmit = { newSalon ->
-                    val salonRepository = SalonRepository()
-                    salonRepository.agregarSalon(newSalon)
-                    salon = newSalon
-                    showSalonForm = false
-                    showMenuScreen = true
-                })
+                SalonForm(onSubmit = { salon = it; showSalonForm = false })
             }
 
             if (showCocinaForm) {
-                CocinaForm(onSubmit = { newCocina ->
-                    val cocinaRepository = CocinaRepository()
-                    cocinaRepository.agregarCocina(newCocina)
-                    cocina = newCocina
-                    showCocinaForm = false
-                    showMenuScreen = true
-                })
+                CocinaForm(username = username, onSubmit = { cocina = it; showCocinaForm = false })
             }
 
             if (showDormitorioForm) {
-                DormitorioForm(onSubmit = { newDormitorio ->
-                    val dormitorioRepository = DormitorioRepository()
-                    dormitorioRepository.agregarDormitorio(newDormitorio)
-                    dormitorio = newDormitorio
-                    showDormitorioForm = false
-                    showMenuScreen = true
-                })
+                DormitorioForm(onSubmit = { dormitorio = it; showDormitorioForm = false })
             }
         }
     }

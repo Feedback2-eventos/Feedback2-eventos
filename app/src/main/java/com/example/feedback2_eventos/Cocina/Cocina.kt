@@ -1,14 +1,13 @@
-// app/src/main/java/com/example/feedback2_eventos/Cocina/Cocina.kt
 package com.example.feedback2_eventos.Cocina
 
 import android.os.AsyncTask
 
 data class Cocina(
-    val nombre: String,
-    var tieneNevera: Boolean,
-    var tieneHorno: Boolean,
-    var tieneVitroceramica: Boolean,
-    var encendido: Boolean
+    val nombre: String = "",
+    var tieneNevera: Boolean = false,
+    var tieneHorno: Boolean = false,
+    var tieneVitroceramica: Boolean = false,
+    var encendido: Boolean = false
 ) {
     private var consumoTotal = 0.0
     private var consumoTask: ConsumoTask? = null
@@ -42,7 +41,7 @@ data class Cocina(
     private inner class ConsumoTask : AsyncTask<Void, Void, Void>() {
         override fun doInBackground(vararg params: Void?): Void? {
             while (!isCancelled) {
-                Thread.sleep(5000)
+                Thread.sleep(2000)
                 consumoTotal += calculateConsumoIncrement()
             }
             return null
