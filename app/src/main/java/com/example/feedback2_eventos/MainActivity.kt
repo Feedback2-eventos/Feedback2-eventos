@@ -17,6 +17,8 @@ import com.example.feedback2_eventos.Salon.Salon
 import com.example.feedback2_eventos.Salon.SalonRepository
 import com.example.feedback2_eventos.Cocina.Cocina
 import com.example.feedback2_eventos.Cocina.CocinaRepository
+import com.example.feedback2_eventos.Dormitorio.Dormitorio
+import com.example.feedback2_eventos.Dormitorio.DormitorioRepository
 import com.example.feedback2_eventos.ui.theme.Feedback2eventosTheme
 
 class MainActivity : ComponentActivity() {
@@ -37,6 +39,7 @@ class MainActivity : ComponentActivity() {
 fun MainContent(modifier: Modifier = Modifier) {
     var showSalonForm by remember { mutableStateOf(false) }
     var showCocinaForm by remember { mutableStateOf(false) }
+    var showDormitorioForm by remember { mutableStateOf(false) }
 
     Column(modifier = modifier.padding(16.dp)) {
         Button(onClick = { showSalonForm = true }) {
@@ -45,6 +48,10 @@ fun MainContent(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = { showCocinaForm = true }) {
             Text("Añadir Cocina")
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(onClick = { showDormitorioForm = true }) {
+            Text("Añadir Dormitorio")
         }
 
         if (showSalonForm) {
@@ -60,6 +67,14 @@ fun MainContent(modifier: Modifier = Modifier) {
                 val cocinaRepository = CocinaRepository()
                 cocinaRepository.agregarCocina(cocina)
                 showCocinaForm = false
+            })
+        }
+
+        if (showDormitorioForm) {
+            DormitorioForm(onSubmit = { dormitorio ->
+                val dormitorioRepository = DormitorioRepository()
+                dormitorioRepository.agregarDormitorio(dormitorio)
+                showDormitorioForm = false
             })
         }
     }
@@ -109,6 +124,7 @@ fun SalonForm(onSubmit: (Salon) -> Unit) {
         }
     }
 }
+
 @Composable
 fun CocinaForm(onSubmit: (Cocina) -> Unit) {
     var nombre by remember { mutableStateOf("") }
@@ -141,6 +157,51 @@ fun CocinaForm(onSubmit: (Cocina) -> Unit) {
                 val vitroceramica = Dispositivo(nombre = vitroceramicaNombre, consumo = vitroceramicaConsumo.toDouble(), encendido = false)
                 val cocina = Cocina(nombre = nombre, nevera = nevera, horno = horno, vitroceramica = vitroceramica, encendido = false)
                 onSubmit(cocina)
+            }) {
+                Text("Aceptar")
+            }
+        }
+    }
+}
+
+@Composable
+fun DormitorioForm(onSubmit: (Dormitorio) -> Unit) {
+    var nombre by remember { mutableStateOf("") }
+    var altavocesNombre by remember { mutableStateOf("") }
+    var altavocesConsumo by remember { mutableStateOf("") }
+    var lamparillaNombre by remember { mutableStateOf("") }
+    var lamparillaConsumo by remember { mutableStateOf("") }
+    var ordenadorNombre by remember { mutableStateOf("") }
+    var ordenadorConsumo by remember { mutableStateOf("") }
+    var encendido by remember { mutableStateOf(false) }
+
+    LazyColumn(modifier = Modifier.padding(16.dp)) {
+        item {
+            TextField(value = nombre, onValueChange = { nombre = it }, label = { Text("Nombre del Dormitorio") })
+            Spacer(modifier = Modifier.height(8.dp))
+            TextField(value = altavocesNombre, onValueChange = { altavocesNombre = it }, label = { Text("Nombre de los Altavoces") })
+            Spacer(modifier = Modifier.height(8.dp))
+            TextField(value = altavocesConsumo, onValueChange = { altavocesConsumo = it }, label = { Text("Consumo de los Altavoces") })
+            Spacer(modifier = Modifier.height(8.dp))
+            TextField(value = lamparillaNombre, onValueChange = { lamparillaNombre = it }, label = { Text("Nombre de la Lamparilla") })
+            Spacer(modifier = Modifier.height(8.dp))
+            TextField(value = lamparillaConsumo, onValueChange = { lamparillaConsumo = it }, label = { Text("Consumo de la Lamparilla") })
+            Spacer(modifier = Modifier.height(8.dp))
+            TextField(value = ordenadorNombre, onValueChange = { ordenadorNombre = it }, label = { Text("Nombre del Ordenador") })
+            Spacer(modifier = Modifier.height(8.dp))
+            TextField(value = ordenadorConsumo, onValueChange = { ordenadorConsumo = it }, label = { Text("Consumo del Ordenador") })
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Encendido")
+                Switch(checked = encendido, onCheckedChange = { encendido = it })
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = {
+                val altavoces = Dispositivo(nombre = altavocesNombre, consumo = altavocesConsumo.toDouble(), encendido = false)
+                val lamparilla = Dispositivo(nombre = lamparillaNombre, consumo = lamparillaConsumo.toDouble(), encendido = false)
+                val ordenador = Dispositivo(nombre = ordenadorNombre, consumo = ordenadorConsumo.toDouble(), encendido = false)
+                val dormitorio = Dormitorio(nombre = nombre, altavoces = altavoces, lamparilla = lamparilla, ordenador = ordenador, encendido = encendido)
+                onSubmit(dormitorio)
             }) {
                 Text("Aceptar")
             }
