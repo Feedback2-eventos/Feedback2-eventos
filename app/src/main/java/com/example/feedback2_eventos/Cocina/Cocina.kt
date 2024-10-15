@@ -48,7 +48,7 @@ data class Cocina(
         }
     }
 
-    private fun calculateConsumoIncrement(): Double {
+     fun calculateConsumoIncrement(): Double {
         var incremento = 0.0
         if (tieneNevera) incremento += 50.0
         if (tieneHorno) incremento += 100.0

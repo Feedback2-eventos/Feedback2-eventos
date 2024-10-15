@@ -1,7 +1,5 @@
-// app/src/main/java/com/example/feedback2_eventos/MenuScreen.kt
 package com.example.feedback2_eventos
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -30,52 +28,59 @@ fun MenuScreen(
     var showDormitorioConsumo by remember { mutableStateOf(false) }
     var cocinaEncendido by remember { mutableStateOf(cocina?.encendido ?: false) }
     var cocinaConsumo by remember { mutableStateOf(cocina?.consumo() ?: 0.0) }
+    var totalConsumo by remember { mutableStateOf(0.0) }
 
     LaunchedEffect(cocinaEncendido) {
         while (cocinaEncendido) {
-            cocinaConsumo = cocina?.consumo() ?: 0.0
-            delay(1000) // Update the UI every second
+            delay(2000)
+            cocinaConsumo += cocina?.calculateConsumoIncrement() ?: 0.0
+            totalConsumo += cocina?.calculateConsumoIncrement() ?: 0.0
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        val usuarioRepository = UsuarioRepository()
+        usuarioRepository.obtenerUsuario(username) { usuario ->
+            if (usuario != null) {
+                totalConsumo = usuario.consumo + cocinaConsumo
+            }
         }
     }
 
     Column(modifier = Modifier.padding(16.dp)) {
         Button(onClick = onBack) {
-            Text("Back")
+            Text("Volver")
         }
         Spacer(modifier = Modifier.height(8.dp))
 
         Button(onClick = { showSalonConsumo = !showSalonConsumo }) {
-            Text("Mostrar Consumo Salón")
+            Text("Mostrar Consumo del Salón")
         }
         Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = { showCocinaConsumo = !showCocinaConsumo }) {
-            Text("Mostrar Consumo Cocina")
+            Text("Mostrar Consumo de la Cocina")
         }
         Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = { showDormitorioConsumo = !showDormitorioConsumo }) {
-            Text("Mostrar Consumo Dormitorio")
+            Text("Mostrar Consumo del Dormitorio")
         }
         Spacer(modifier = Modifier.height(8.dp))
 
-        if (cocina != null) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("Encendido Cocina")
-                Switch(checked = cocinaEncendido, onCheckedChange = {
-                    cocinaEncendido = it
-                    cocina.updateEncendido(it)
-                })
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-
         if (showSalonConsumo) {
             Text("Consumo del Salón: ${salon?.consumo() ?: 0.0}")
-            Text("Atributos del Salón: ${salon?.let { "Lampara: ${it.tieneLampara}, Televisión: ${it.tieneTelevision}, Aire Acondicionado: ${it.tieneAireAcondicionado}, Encendido: ${it.encendido}" } ?: ""}")
         }
 
         if (showCocinaConsumo) {
             Text("Consumo de la Cocina: $cocinaConsumo")
+            Text("Consumo Total: $totalConsumo")
             Text("Atributos de la Cocina: ${cocina?.let { "Nevera: ${it.tieneNevera}, Horno: ${it.tieneHorno}, Vitrocerámica: ${it.tieneVitroceramica}, Encendido: ${it.encendido}" } ?: ""}")
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(onClick = {
+                cocinaEncendido = !cocinaEncendido
+                cocina?.updateEncendido(cocinaEncendido)
+            }) {
+                Text(if (cocinaEncendido) "Apagar" else "Encender")
+            }
         }
 
         if (showDormitorioConsumo) {
@@ -84,15 +89,15 @@ fun MenuScreen(
         }
 
         Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = {
-            guardarConsumo(username, cocinaConsumo)
-        }) {
-            Text("Guardar Consumo")
-        }
+       Button(onClick = {
+    guardarConsumo(username, totalConsumo)
+}) {
+    Text("Guardar Consumo")
+}
     }
 }
 
-fun guardarConsumo(username: String, consumo: Double) {
+fun guardarConsumo(username: String, totalConsumo: Double) {
     val usuarioRepository = UsuarioRepository()
-    usuarioRepository.actualizarConsumoUsuario(username, consumo)
+    usuarioRepository.actualizarConsumoUsuario(username, totalConsumo)
 }
