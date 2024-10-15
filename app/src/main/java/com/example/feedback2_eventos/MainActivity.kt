@@ -14,6 +14,8 @@ import com.example.feedback2_eventos.Salon.SalonForm
 import com.example.feedback2_eventos.Cocina.CocinaForm
 import com.example.feedback2_eventos.Dormitorio.Dormitorio
 import com.example.feedback2_eventos.Dormitorio.DormitorioForm
+import com.example.feedback2_eventos.Menus.MenuScreen
+import com.example.feedback2_eventos.Menus.StartScreen
 import com.example.feedback2_eventos.ui.theme.Feedback2eventosTheme
 import com.example.feedback2_eventos.Salon.Salon
 

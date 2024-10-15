@@ -1,4 +1,4 @@
-package com.example.feedback2_eventos
+package com.example.feedback2_eventos.Menus
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
