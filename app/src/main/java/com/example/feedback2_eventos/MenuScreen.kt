@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/feedback2_eventos/MenuScreen.kt
 package com.example.feedback2_eventos
 
 import androidx.compose.foundation.layout.*

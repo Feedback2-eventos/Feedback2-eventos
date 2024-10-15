@@ -44,20 +44,33 @@ fun StartScreen(onStart: (Boolean, String) -> Unit) {
             onClick = {
                 loading = true
                 errorMessage = null
+                checkUserCocinas(db, username, password, onStart) { error ->
+                    errorMessage = error
+                    loading = false
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Acceder")
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(
+            onClick = {
+                loading = true
+                errorMessage = null
                 checkIfUserExists(db, username) { exists ->
                     if (exists) {
                         errorMessage = "El nombre de usuario ya existe"
                         loading = false
                     } else {
                         val newUser = Usuario(nombre = username, contraseña = password)
-                        db.collection("usuarios")
-                            .document(username)
-                            .set(newUser)
+                        db.collection("usuarios").document(username).set(newUser)
                             .addOnSuccessListener {
-                                checkUserCocinas(db, username, onStart)
+                                onStart(false, username)
+                                loading = false
                             }
                             .addOnFailureListener { e ->
-                                errorMessage = "Error al registrar el usuario: ${e.message}"
+                                errorMessage = "Error al registrar: ${e.message}"
                                 loading = false
                             }
                     }
@@ -65,18 +78,7 @@ fun StartScreen(onStart: (Boolean, String) -> Unit) {
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Registrar Usuario")
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(
-            onClick = {
-                loading = true
-                errorMessage = null
-                checkUserCocinas(db, username, onStart)
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Acceder")
+            Text("Registrar")
         }
         if (loading) {
             Spacer(modifier = Modifier.height(16.dp))
@@ -102,16 +104,26 @@ private fun checkIfUserExists(db: FirebaseFirestore, username: String, callback:
         }
 }
 
-private fun checkUserCocinas(db: FirebaseFirestore, username: String, onStart: (Boolean, String) -> Unit) {
+private fun checkUserCocinas(
+    db: FirebaseFirestore,
+    username: String,
+    password: String,
+    onStart: (Boolean, String) -> Unit,
+    onError: (String) -> Unit
+) {
     db.collection("usuarios")
         .document(username)
         .get()
         .addOnSuccessListener { document ->
             val user = document.toObject(Usuario::class.java)
-            val hasCocinas = user?.cocinas?.isNotEmpty() == true
-            onStart(hasCocinas, username)
+            if (user != null && user.contraseña == password) {
+                val hasCocinas = user.cocinas.isNotEmpty()
+                onStart(hasCocinas, username)
+            } else {
+                onError("Nombre de usuario o contraseña incorrectos")
+            }
         }
         .addOnFailureListener { e ->
-            // Handle error if needed
+            onError("Error al acceder: ${e.message}")
         }
 }
