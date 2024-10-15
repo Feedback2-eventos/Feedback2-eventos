@@ -29,15 +29,17 @@ class MainActivity : ComponentActivity() {
                 var showStartScreen by remember { mutableStateOf(true) }
                 var hasCocinas by remember { mutableStateOf(false) }
                 var username by remember { mutableStateOf("") }
+                var initialCocina by remember { mutableStateOf<Cocina?>(null) }
 
                 if (showStartScreen) {
-                    StartScreen(onStart = { hasCocinasResult, user ->
+                    StartScreen(onStart = { hasCocinasResult: Boolean, user: String, cocina: Cocina? ->
                         hasCocinas = hasCocinasResult
                         username = user
+                        initialCocina = cocina
                         showStartScreen = false
                     })
                 } else {
-                    MainContent(hasCocinas = hasCocinas, username = username)
+                    MainContent(hasCocinas = hasCocinas, username = username, initialCocina = initialCocina)
                 }
             }
         }
@@ -45,13 +47,13 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainContent(modifier: Modifier = Modifier, hasCocinas: Boolean, username: String) {
+fun MainContent(modifier: Modifier = Modifier, hasCocinas: Boolean, username: String, initialCocina: Cocina?) {
     var showSalonForm by remember { mutableStateOf(false) }
     var showCocinaForm by remember { mutableStateOf(false) }
     var showDormitorioForm by remember { mutableStateOf(false) }
     var showMenuScreen by remember { mutableStateOf(false) }
     var salon by remember { mutableStateOf<Salon?>(null) }
-    var cocina by remember { mutableStateOf<Cocina?>(null) }
+    var cocina by remember { mutableStateOf(initialCocina) }
     var dormitorio by remember { mutableStateOf<Dormitorio?>(null) }
 
     if (showMenuScreen) {

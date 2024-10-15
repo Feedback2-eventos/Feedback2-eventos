@@ -7,11 +7,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.example.feedback2_eventos.Cocina.Cocina
 import com.example.feedback2_eventos.Usuario.Usuario
 import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
-fun StartScreen(onStart: (Boolean, String) -> Unit) {
+fun StartScreen(onStart: (Boolean, String, Cocina?) -> Unit) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var loading by remember { mutableStateOf(false) }
@@ -66,7 +67,7 @@ fun StartScreen(onStart: (Boolean, String) -> Unit) {
                         val newUser = Usuario(nombre = username, contraseña = password)
                         db.collection("usuarios").document(username).set(newUser)
                             .addOnSuccessListener {
-                                onStart(false, username)
+                                onStart(false, username, null)
                                 loading = false
                             }
                             .addOnFailureListener { e ->
@@ -108,7 +109,7 @@ private fun checkUserCocinas(
     db: FirebaseFirestore,
     username: String,
     password: String,
-    onStart: (Boolean, String) -> Unit,
+    onStart: (Boolean, String, Cocina?) -> Unit,
     onError: (String) -> Unit
 ) {
     db.collection("usuarios")
@@ -118,7 +119,8 @@ private fun checkUserCocinas(
             val user = document.toObject(Usuario::class.java)
             if (user != null && user.contraseña == password) {
                 val hasCocinas = user.cocinas.isNotEmpty()
-                onStart(hasCocinas, username)
+                val cocina = if (hasCocinas) user.cocinas[0] else null
+                onStart(hasCocinas, username, cocina)
             } else {
                 onError("Nombre de usuario o contraseña incorrectos")
             }
