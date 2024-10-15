@@ -12,11 +12,9 @@ class SalonRepository {
             .set(salon)
             .addOnSuccessListener {
                 Log.d("SalonRepository", "Salón agregado exitosamente: ${salon.nombre}")
-                // Aquí puedes agregar cualquier lógica adicional que necesites
             }
             .addOnFailureListener { e ->
                 Log.e("SalonRepository", "Error al agregar el salón: ${salon.nombre}", e)
-                // Aquí puedes manejar el error, por ejemplo, mostrando un mensaje al usuario
             }
     }
 

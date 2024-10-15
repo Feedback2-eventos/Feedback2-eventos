@@ -1,3 +1,4 @@
+// app/src/main/java/com/example/feedback2_eventos/MainActivity.kt
 package com.example.feedback2_eventos
 
 import android.os.Bundle
@@ -18,6 +19,7 @@ import com.example.feedback2_eventos.Menus.MenuScreen
 import com.example.feedback2_eventos.Menus.StartScreen
 import com.example.feedback2_eventos.ui.theme.Feedback2eventosTheme
 import com.example.feedback2_eventos.Salon.Salon
+import com.example.feedback2_eventos.Usuario.UsuarioRepository
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,6 +56,14 @@ fun MainContent(modifier: Modifier = Modifier, hasCocinas: Boolean, username: St
     var salon by remember { mutableStateOf<Salon?>(null) }
     var cocina by remember { mutableStateOf(initialCocina) }
     var dormitorio by remember { mutableStateOf<Dormitorio?>(null) }
+    var hasSalon by remember { mutableStateOf(false) }
+
+    LaunchedEffect(username) {
+        val usuarioRepository = UsuarioRepository()
+        usuarioRepository.obtenerUsuario(username) { usuario ->
+            hasSalon = usuario?.salones?.isNotEmpty() == true
+        }
+    }
 
     if (showMenuScreen) {
         MenuScreen(
@@ -68,7 +78,7 @@ fun MainContent(modifier: Modifier = Modifier, hasCocinas: Boolean, username: St
         )
     } else {
         Column(modifier = modifier.padding(16.dp)) {
-            Button(onClick = { showSalonForm = true }) {
+            Button(onClick = { showSalonForm = true }, enabled = !hasSalon) {
                 Text("Agregar Salón")
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -85,7 +95,7 @@ fun MainContent(modifier: Modifier = Modifier, hasCocinas: Boolean, username: St
             }
 
             if (showSalonForm) {
-                SalonForm(onSubmit = { salon = it; showSalonForm = false })
+                SalonForm(username = username, onSubmit = { salon = it; showSalonForm = false })
             }
 
             if (showCocinaForm) {

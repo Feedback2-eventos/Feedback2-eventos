@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.dp
 import com.example.feedback2_eventos.Cocina.Cocina
 import com.example.feedback2_eventos.Dormitorio.Dormitorio
 import com.example.feedback2_eventos.Salon.Salon
+import com.example.feedback2_eventos.Usuario.Usuario
 import com.example.feedback2_eventos.Usuario.UsuarioRepository
 import kotlinx.coroutines.delay
 
@@ -27,6 +28,8 @@ fun MenuScreen(
     var showDormitorioConsumo by remember { mutableStateOf(false) }
     var cocinaEncendido by remember { mutableStateOf(cocina?.encendido ?: false) }
     var cocinaConsumo by remember { mutableStateOf(cocina?.consumo() ?: 0.0) }
+    var salonEncendido by remember { mutableStateOf(salon?.encendido ?: false) }
+    var salonConsumo by remember { mutableStateOf(salon?.consumo() ?: 0.0) }
     var totalConsumo by remember { mutableStateOf(0.0) }
 
     LaunchedEffect(cocinaEncendido) {
@@ -37,11 +40,19 @@ fun MenuScreen(
         }
     }
 
+    LaunchedEffect(salonEncendido) {
+        while (salonEncendido) {
+            delay(2000)
+            salonConsumo += salon?.calculateConsumoIncrement() ?: 0.0
+            totalConsumo += salon?.calculateConsumoIncrement() ?: 0.0
+        }
+    }
+
     LaunchedEffect(Unit) {
         val usuarioRepository = UsuarioRepository()
-        usuarioRepository.obtenerUsuario(username) { usuario ->
+        usuarioRepository.obtenerUsuario(username) { usuario: Usuario? ->
             if (usuario != null) {
-                totalConsumo = usuario.consumo + cocinaConsumo
+                totalConsumo = usuario.consumo + cocinaConsumo + salonConsumo
             }
         }
     }
@@ -66,7 +77,21 @@ fun MenuScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         if (showSalonConsumo) {
-            Text("Consumo del Salón: ${salon?.consumo() ?: 0.0}")
+            Text("Consumo del Salón: $salonConsumo")
+            Text("Consumo Total: $totalConsumo")
+            Text("Atributos de la Cocina: ${salon?.let { "lampara: ${it.tieneLampara}, television: ${it.tieneTelevision}, aire acondicionado: ${it.tieneAireAcondicionado}, Encendido: ${it.encendido}" } ?: ""}")
+            Button(onClick = {
+                salonEncendido = !salonEncendido
+                salon?.updateEncendido(salonEncendido)
+            }) {
+                Text(if (salonEncendido) "Apagar" else "Encender")
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(onClick = {
+                guardarConsumoSalon(username, salonConsumo)
+            }) {
+                Text("Guardar Consumo del Salón")
+            }
         }
 
         if (showCocinaConsumo) {
@@ -84,16 +109,22 @@ fun MenuScreen(
 
         if (showDormitorioConsumo) {
             Text("Consumo del Dormitorio: ${dormitorio?.consumo() ?: 0.0}")
+            Text("Consumo Total: $totalConsumo")
             Text("Atributos del Dormitorio: ${dormitorio?.let { "Altavoces: ${it.tieneAltavoces}, Lamparilla: ${it.tieneLamparilla}, Ordenador: ${it.tieneOrdenador}, Encendido: ${it.encendido}" } ?: ""}")
         }
 
         Spacer(modifier = Modifier.height(8.dp))
-       Button(onClick = {
-    guardarConsumo(username, totalConsumo)
-}) {
-    Text("Guardar Consumo")
-}
+        Button(onClick = {
+            guardarConsumo(username, totalConsumo)
+        }) {
+            Text("Guardar Consumo Total")
+        }
     }
+}
+
+fun guardarConsumoSalon(username: String, salonConsumo: Double) {
+    val usuarioRepository = UsuarioRepository()
+    usuarioRepository.actualizarConsumoSalon(username, salonConsumo)
 }
 
 fun guardarConsumo(username: String, totalConsumo: Double) {
