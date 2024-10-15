@@ -9,16 +9,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.feedback2_eventos.Salon.SalonForm
-import com.example.feedback2_eventos.Salon.SalonRepository
-import com.example.feedback2_eventos.Salon.Salon
-import com.example.feedback2_eventos.Cocina.CocinaForm
-import com.example.feedback2_eventos.Cocina.CocinaRepository
 import com.example.feedback2_eventos.Cocina.Cocina
-import com.example.feedback2_eventos.Dormitorio.DormitorioForm
-import com.example.feedback2_eventos.Dormitorio.DormitorioRepository
+import com.example.feedback2_eventos.Salon.SalonForm
+import com.example.feedback2_eventos.Cocina.CocinaForm
 import com.example.feedback2_eventos.Dormitorio.Dormitorio
+import com.example.feedback2_eventos.Dormitorio.DormitorioForm
 import com.example.feedback2_eventos.ui.theme.Feedback2eventosTheme
+import com.example.feedback2_eventos.Salon.Salon
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,12 +55,13 @@ fun MainContent(modifier: Modifier = Modifier, hasCocinas: Boolean, username: St
 
     if (showMenuScreen) {
         MenuScreen(
+            username = username,
             salon = salon,
             cocina = cocina,
             dormitorio = dormitorio,
-            onShowSalonConsumo = { /* Implementar lógica para mostrar consumo del salón */ },
-            onShowCocinaConsumo = { /* Implementar lógica para mostrar consumo de la cocina */ },
-            onShowDormitorioConsumo = { /* Implementar lógica para mostrar consumo del dormitorio */ },
+            onShowSalonConsumo = { /* Implement logic to show salon consumption */ },
+            onShowCocinaConsumo = { /* Implement logic to show kitchen consumption */ },
+            onShowDormitorioConsumo = { /* Implement logic to show bedroom consumption */ },
             onBack = { showMenuScreen = false }
         )
     } else {

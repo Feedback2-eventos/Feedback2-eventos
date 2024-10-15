@@ -1,5 +1,7 @@
+// app/src/main/java/com/example/feedback2_eventos/MenuScreen.kt
 package com.example.feedback2_eventos
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -9,10 +11,12 @@ import androidx.compose.ui.unit.dp
 import com.example.feedback2_eventos.Cocina.Cocina
 import com.example.feedback2_eventos.Dormitorio.Dormitorio
 import com.example.feedback2_eventos.Salon.Salon
+import com.example.feedback2_eventos.Usuario.UsuarioRepository
 import kotlinx.coroutines.delay
 
 @Composable
 fun MenuScreen(
+    username: String,
     salon: Salon?,
     cocina: Cocina?,
     dormitorio: Dormitorio?,
@@ -78,5 +82,17 @@ fun MenuScreen(
             Text("Consumo del Dormitorio: ${dormitorio?.consumo() ?: 0.0}")
             Text("Atributos del Dormitorio: ${dormitorio?.let { "Altavoces: ${it.tieneAltavoces}, Lamparilla: ${it.tieneLamparilla}, Ordenador: ${it.tieneOrdenador}, Encendido: ${it.encendido}" } ?: ""}")
         }
+
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(onClick = {
+            guardarConsumo(username, cocinaConsumo)
+        }) {
+            Text("Guardar Consumo")
+        }
     }
+}
+
+fun guardarConsumo(username: String, consumo: Double) {
+    val usuarioRepository = UsuarioRepository()
+    usuarioRepository.actualizarConsumoUsuario(username, consumo)
 }

@@ -59,4 +59,15 @@ class UsuarioRepository {
             Log.e("UsuarioRepository", "Error al obtener el usuario: $nombreUsuario", e)
         }
     }
+
+    fun actualizarConsumoUsuario(nombreUsuario: String, nuevoConsumo: Double) {
+        val usuarioRef = db.collection("usuarios").document(nombreUsuario)
+        usuarioRef.update("consumo", nuevoConsumo)
+            .addOnSuccessListener {
+                Log.d("UsuarioRepository", "Consumo actualizado exitosamente para el usuario: $nombreUsuario")
+            }
+            .addOnFailureListener { e ->
+                Log.e("UsuarioRepository", "Error al actualizar el consumo para el usuario: $nombreUsuario", e)
+            }
+    }
 }
