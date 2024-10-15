@@ -5,41 +5,44 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.feedback2_eventos.Dispositivo
 
 @Composable
 fun CocinaForm(onSubmit: (Cocina) -> Unit) {
     var nombre by remember { mutableStateOf("") }
-    var neveraNombre by remember { mutableStateOf("") }
-    var neveraConsumo by remember { mutableStateOf("") }
-    var hornoNombre by remember { mutableStateOf("") }
-    var hornoConsumo by remember { mutableStateOf("") }
-    var vitroceramicaNombre by remember { mutableStateOf("") }
-    var vitroceramicaConsumo by remember { mutableStateOf("") }
+    var tieneNevera by remember { mutableStateOf(false) }
+    var tieneHorno by remember { mutableStateOf(false) }
+    var tieneVitroceramica by remember { mutableStateOf(false) }
+    var encendido by remember { mutableStateOf(false) }
 
     LazyColumn(modifier = Modifier.padding(16.dp)) {
         item {
             TextField(value = nombre, onValueChange = { nombre = it }, label = { Text("Nombre de la Cocina") })
             Spacer(modifier = Modifier.height(8.dp))
-            TextField(value = neveraNombre, onValueChange = { neveraNombre = it }, label = { Text("Nombre de la Nevera") })
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Tiene Nevera")
+                Switch(checked = tieneNevera, onCheckedChange = { tieneNevera = it })
+            }
             Spacer(modifier = Modifier.height(8.dp))
-            TextField(value = neveraConsumo, onValueChange = { neveraConsumo = it }, label = { Text("Consumo de la Nevera") })
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Tiene Horno")
+                Switch(checked = tieneHorno, onCheckedChange = { tieneHorno = it })
+            }
             Spacer(modifier = Modifier.height(8.dp))
-            TextField(value = hornoNombre, onValueChange = { hornoNombre = it }, label = { Text("Nombre del Horno") })
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Tiene Vitrocerámica")
+                Switch(checked = tieneVitroceramica, onCheckedChange = { tieneVitroceramica = it })
+            }
             Spacer(modifier = Modifier.height(8.dp))
-            TextField(value = hornoConsumo, onValueChange = { hornoConsumo = it }, label = { Text("Consumo del Horno") })
-            Spacer(modifier = Modifier.height(8.dp))
-            TextField(value = vitroceramicaNombre, onValueChange = { vitroceramicaNombre = it }, label = { Text("Nombre de la Vitrocerámica") })
-            Spacer(modifier = Modifier.height(8.dp))
-            TextField(value = vitroceramicaConsumo, onValueChange = { vitroceramicaConsumo = it }, label = { Text("Consumo de la Vitrocerámica") })
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Encendido")
+                Switch(checked = encendido, onCheckedChange = { encendido = it })
+            }
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = {
-                val nevera = Dispositivo(nombre = neveraNombre, consumo = neveraConsumo.toDouble(), encendido = false)
-                val horno = Dispositivo(nombre = hornoNombre, consumo = hornoConsumo.toDouble(), encendido = false)
-                val vitroceramica = Dispositivo(nombre = vitroceramicaNombre, consumo = vitroceramicaConsumo.toDouble(), encendido = false)
-                val cocina = Cocina(nombre = nombre, nevera = nevera, horno = horno, vitroceramica = vitroceramica, encendido = false)
+                val cocina = Cocina(nombre = nombre, tieneNevera = tieneNevera, tieneHorno = tieneHorno, tieneVitroceramica = tieneVitroceramica, encendido = encendido)
                 onSubmit(cocina)
             }) {
                 Text("Aceptar")
