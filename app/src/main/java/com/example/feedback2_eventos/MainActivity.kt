@@ -28,6 +28,7 @@ import com.example.feedback2_eventos.Menus.StartScreen
 import com.example.feedback2_eventos.ui.theme.Feedback2eventosTheme
 import com.example.feedback2_eventos.Salon.Salon
 import com.example.feedback2_eventos.Usuario.UsuarioRepository
+import kotlinx.coroutines.*
 
 class MainActivity : ComponentActivity() {
     private val CHANNEL_ID = "consumo_channel"
@@ -121,11 +122,18 @@ class MainActivity : ComponentActivity() {
 
     private fun checkConsumoAndNotify(username: String) {
         val usuarioRepository = UsuarioRepository()
-        usuarioRepository.obtenerUsuario(username) { usuario ->
-            usuario?.let {
-                if (it.consumo > 1000) {
-                    showNotification()
+        val scope = CoroutineScope(Dispatchers.IO)
+
+        scope.launch {
+            while (true) {
+                usuarioRepository.obtenerUsuario(username) { usuario ->
+                    usuario?.let {
+                        if (it.consumo > 1000) {
+                            showNotification()
+                        }
+                    }
                 }
+                delay(5000) // Espera 5 segundos antes de volver a comprobar
             }
         }
     }
