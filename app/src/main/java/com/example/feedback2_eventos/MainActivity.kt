@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -57,11 +58,13 @@ fun MainContent(modifier: Modifier = Modifier, hasCocinas: Boolean, username: St
     var cocina by remember { mutableStateOf(initialCocina) }
     var dormitorio by remember { mutableStateOf<Dormitorio?>(null) }
     var hasSalon by remember { mutableStateOf(false) }
+    var hasDormitorio by remember { mutableStateOf(false) }
 
     LaunchedEffect(username) {
         val usuarioRepository = UsuarioRepository()
         usuarioRepository.obtenerUsuario(username) { usuario ->
             hasSalon = usuario?.salones?.isNotEmpty() == true
+            hasDormitorio = usuario?.dormitorios?.isNotEmpty() == true
         }
     }
 
@@ -86,7 +89,7 @@ fun MainContent(modifier: Modifier = Modifier, hasCocinas: Boolean, username: St
                 Text("Agregar Cocina")
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = { showDormitorioForm = true }) {
+            Button(onClick = { showDormitorioForm = true }, enabled = !hasDormitorio) {
                 Text("Agregar Dormitorio")
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -103,7 +106,7 @@ fun MainContent(modifier: Modifier = Modifier, hasCocinas: Boolean, username: St
             }
 
             if (showDormitorioForm) {
-                DormitorioForm(onSubmit = { dormitorio = it; showDormitorioForm = false })
+                DormitorioForm(username = username, onSubmit = { dormitorio = it; showDormitorioForm = false })
             }
         }
     }

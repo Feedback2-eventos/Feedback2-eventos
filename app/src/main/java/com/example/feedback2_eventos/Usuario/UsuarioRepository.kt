@@ -4,6 +4,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import android.util.Log
 import com.example.feedback2_eventos.Cocina.Cocina
 import com.example.feedback2_eventos.Salon.Salon
+import com.example.feedback2_eventos.Dormitorio.Dormitorio
 
 class UsuarioRepository {
     private val db = FirebaseFirestore.getInstance()
@@ -64,6 +65,23 @@ class UsuarioRepository {
             }
     }
 
+    fun agregarDormitorioAUsuario(username: String, dormitorio: Dormitorio) {
+        db.collection("usuarios")
+            .document(username)
+            .get()
+            .addOnSuccessListener { document ->
+                val usuario = document.toObject(Usuario::class.java)
+                usuario?.let {
+                    it.dormitorios.add(dormitorio)
+                    it.actualizarConsumoTotal()
+                    db.collection("usuarios").document(username).set(it)
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("UsuarioRepository", "Error al agregar dormitorio al usuario: $username", e)
+            }
+    }
+
     fun actualizarConsumoUsuario(username: String, consumo: Double) {
         db.collection("usuarios")
             .document(username)
@@ -85,6 +103,18 @@ class UsuarioRepository {
             }
             .addOnFailureListener { e ->
                 Log.e("UsuarioRepository", "Error al actualizar el consumo del salón del usuario: $username", e)
+            }
+    }
+
+    fun actualizarConsumoDormitorio(username: String, dormitorioConsumo: Double) {
+        db.collection("usuarios")
+            .document(username)
+            .update("dormitorioConsumo", dormitorioConsumo)
+            .addOnSuccessListener {
+                Log.d("UsuarioRepository", "Consumo del dormitorio actualizado para el usuario: $username")
+            }
+            .addOnFailureListener { e ->
+                Log.e("UsuarioRepository", "Error al actualizar el consumo del dormitorio del usuario: $username", e)
             }
     }
 }
