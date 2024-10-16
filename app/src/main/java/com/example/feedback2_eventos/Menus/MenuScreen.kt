@@ -35,36 +35,39 @@ fun MenuScreen(
     var dormitorioConsumo by remember { mutableStateOf(dormitorio?.consumo() ?: 0.0) }
     var totalConsumo by remember { mutableStateOf(0.0) }
 
-    LaunchedEffect(cocinaEncendido) {
-        while (cocinaEncendido) {
-            delay(2000)
-            cocinaConsumo += cocina?.calculateConsumoIncrement() ?: 0.0
-            totalConsumo += cocina?.calculateConsumoIncrement() ?: 0.0
-        }
-    }
-
-    LaunchedEffect(salonEncendido) {
-        while (salonEncendido) {
-            delay(2000)
-            salonConsumo += salon?.calculateConsumoIncrement() ?: 0.0
-            totalConsumo += salon?.calculateConsumoIncrement() ?: 0.0
-        }
-    }
-
-    LaunchedEffect(dormitorioEncendido) {
-        while (dormitorioEncendido) {
-            delay(2000)
-            dormitorioConsumo += dormitorio?.calculateConsumoIncrement() ?: 0.0
-            totalConsumo += dormitorio?.calculateConsumoIncrement() ?: 0.0
-        }
-    }
-
     LaunchedEffect(Unit) {
         val usuarioRepository = UsuarioRepository()
         usuarioRepository.obtenerUsuario(username) { usuario: Usuario? ->
             if (usuario != null) {
                 totalConsumo = usuario.consumo + cocinaConsumo + salonConsumo + dormitorioConsumo
             }
+        }
+    }
+
+    LaunchedEffect(cocinaEncendido) {
+        while (cocinaEncendido) {
+            delay(2000)
+            val incremento = cocina?.calculateConsumoIncrement() ?: 0.0
+            cocinaConsumo += incremento
+            totalConsumo += incremento
+        }
+    }
+
+    LaunchedEffect(salonEncendido) {
+        while (salonEncendido) {
+            delay(2000)
+            val incremento = salon?.calculateConsumoIncrement() ?: 0.0
+            salonConsumo += incremento
+            totalConsumo += incremento
+        }
+    }
+
+    LaunchedEffect(dormitorioEncendido) {
+        while (dormitorioEncendido) {
+            delay(2000)
+            val incremento = dormitorio?.calculateConsumoIncrement() ?: 0.0
+            dormitorioConsumo += incremento
+            totalConsumo += incremento
         }
     }
 
@@ -135,11 +138,6 @@ fun MenuScreen(
             }
         }
     }
-}
-
-fun guardarConsumoDormitorio(username: String, dormitorioConsumo: Double) {
-    val usuarioRepository = UsuarioRepository()
-    usuarioRepository.actualizarConsumoDormitorio(username, dormitorioConsumo)
 }
 
 fun guardarConsumo(username: String, totalConsumo: Double) {
