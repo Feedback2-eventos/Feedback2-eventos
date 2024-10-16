@@ -43,7 +43,7 @@ fun MenuScreen(
         usuarioRepository.obtenerUsuario(username) { usuario: Usuario? ->
             if (usuario != null) {
                 initialConsumo = usuario.consumo
-                totalConsumo = initialConsumo + cocinaConsumo + salonConsumo + dormitorioConsumo
+                totalConsumo = maxOf(initialConsumo + cocinaConsumo + salonConsumo + dormitorioConsumo, usuario.consumo)
             }
         }
     }
@@ -75,13 +75,14 @@ fun MenuScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
-        while (true) {
+   LaunchedEffect(Unit) {
+    while (true) {
+        if (totalConsumo > 0) {
             guardarConsumo(username, totalConsumo)
-            delay(2000) // Espera 2 segundos antes de volver a ejecutar
         }
+        delay(2000) // Espera 2 segundos antes de volver a ejecutar
     }
-
+}
     LazyColumn(modifier = Modifier.padding(16.dp)) {
         item {
             AnimatedButton(text = "Volver", onClick = onBack)
