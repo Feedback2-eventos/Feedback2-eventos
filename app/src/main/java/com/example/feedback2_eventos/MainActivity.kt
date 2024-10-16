@@ -121,22 +121,24 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun checkConsumoAndNotify(username: String) {
-        val usuarioRepository = UsuarioRepository()
-        val scope = CoroutineScope(Dispatchers.IO)
+    val usuarioRepository = UsuarioRepository()
+    val scope = CoroutineScope(Dispatchers.IO)
+    var notificationShown = false
 
-        scope.launch {
-            while (true) {
-                usuarioRepository.obtenerUsuario(username) { usuario ->
-                    usuario?.let {
-                        if (it.consumo > 1000) {
-                            showNotification()
-                        }
+    scope.launch {
+        while (true) {
+            usuarioRepository.obtenerUsuario(username) { usuario ->
+                usuario?.let {
+                    if (it.consumo > 1000 && !notificationShown) {
+                        showNotification()
+                        notificationShown = true
                     }
                 }
-                delay(5000) // Espera 5 segundos antes de volver a comprobar
             }
+            delay(50) // Espera 5 segundos antes de volver a comprobar
         }
     }
+}
 
     @Composable
     fun MainContent(
