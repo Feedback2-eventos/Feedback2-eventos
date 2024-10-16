@@ -123,21 +123,32 @@ class MainActivity : ComponentActivity() {
     private fun checkConsumoAndNotify(username: String) {
     val usuarioRepository = UsuarioRepository()
     val scope = CoroutineScope(Dispatchers.IO)
-    var notificationShown = false
+    val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+    val notificationId = 1
 
     scope.launch {
         while (true) {
             usuarioRepository.obtenerUsuario(username) { usuario ->
                 usuario?.let {
-                    if (it.consumo > 1000 && !notificationShown) {
+                    if (it.consumo > 1000 && !isNotificationActive(notificationManager, notificationId)) {
                         showNotification()
-                        notificationShown = true
                     }
                 }
             }
             delay(50) // Espera 5 segundos antes de volver a comprobar
         }
     }
+}
+
+private fun isNotificationActive(notificationManager: NotificationManager, notificationId: Int): Boolean {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        for (notification in notificationManager.activeNotifications) {
+            if (notification.id == notificationId) {
+                return true
+            }
+        }
+    }
+    return false
 }
 
     @Composable
