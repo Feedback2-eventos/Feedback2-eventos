@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/feedback2_eventos/AnimatedButton.kt
 package com.example.feedback2_eventos
 
 import androidx.compose.animation.core.*
@@ -15,26 +14,25 @@ import androidx.compose.ui.unit.sp
 fun AnimatedButton(
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    colors: ButtonColors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)) // Verde energía
 ) {
     val infiniteTransition = rememberInfiniteTransition()
     val animatedWidth by infiniteTransition.animateFloat(
         initialValue = 200f,
         targetValue = 220f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1000, easing = LinearEasing),
+            animation = tween(durationMillis = 1000, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
         )
     )
 
     Button(
         onClick = onClick,
-        modifier = modifier
-            .width(animatedWidth.dp)
-            .height(50.dp), // Ajusta la altura del botón
-        shape = CircleShape,
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Magenta)
+        modifier = modifier.width(animatedWidth.dp).height(50.dp),
+        colors = colors,
+        shape = CircleShape
     ) {
-        Text(text = text, fontSize = 16.sp) // Ajusta el tamaño del texto
+        Text(text = text, fontSize = 16.sp)
     }
 }
