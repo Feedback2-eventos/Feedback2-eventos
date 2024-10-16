@@ -99,18 +99,6 @@ class UsuarioRepository {
             }
     }
 
-    fun actualizarConsumoSalon(username: String, salonConsumo: Double) {
-        db.collection("usuarios")
-            .document(username)
-            .update("salonConsumo", salonConsumo)
-            .addOnSuccessListener {
-                Log.d("UsuarioRepository", "Consumo del salón actualizado para el usuario: $username")
-            }
-            .addOnFailureListener { e ->
-                Log.e("UsuarioRepository", "Error al actualizar el consumo del salón del usuario: $username", e)
-            }
-    }
-
     fun actualizarConsumoDormitorio(username: String, dormitorioConsumo: Double) {
         db.collection("usuarios")
             .document(username)
@@ -121,21 +109,5 @@ class UsuarioRepository {
             .addOnFailureListener { e ->
                 Log.e("UsuarioRepository", "Error al actualizar el consumo del dormitorio del usuario: $username", e)
             }
-    }
-
-    fun verificarConsumoYNotificar(username: String, mainActivity: MainActivity) {
-        val runnable = object : Runnable {
-            override fun run() {
-                obtenerUsuario(username) { usuario ->
-                    usuario?.let {
-                        if (it.consumo > 10000) {
-                            mainActivity.showNotification()
-                        }
-                    }
-                }
-                handler.postDelayed(this, checkInterval)
-            }
-        }
-        handler.post(runnable)
     }
 }
