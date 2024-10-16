@@ -5,11 +5,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.feedback2_eventos.Cocina.Cocina
 import com.example.feedback2_eventos.Salon.SalonForm
@@ -68,45 +70,46 @@ fun MainContent(modifier: Modifier = Modifier, hasCocinas: Boolean, username: St
         }
     }
 
-    if (showMenuScreen) {
-        MenuScreen(
-            username = username,
-            salon = salon,
-            cocina = cocina,
-            dormitorio = dormitorio,
-            onShowSalonConsumo = { /* Implement logic to show salon consumption */ },
-            onShowCocinaConsumo = { /* Implement logic to show kitchen consumption */ },
-            onShowDormitorioConsumo = { /* Implement logic to show bedroom consumption */ },
-            onBack = { showMenuScreen = false }
+    Box(modifier = modifier.fillMaxSize()) {
+        Image(
+            painter = painterResource(id = R.drawable.fondo), // Asegúrate de que fondo.jpg esté en res/drawable
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
         )
-    } else {
-        Column(modifier = modifier.padding(16.dp)) {
-            Button(onClick = { showSalonForm = true }, enabled = !hasSalon) {
-                Text("Agregar Salón")
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = { showCocinaForm = true }, enabled = !hasCocinas) {
-                Text("Agregar Cocina")
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = { showDormitorioForm = true }, enabled = !hasDormitorio) {
-                Text("Agregar Dormitorio")
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = { showMenuScreen = true }) {
-                Text("Mostrar Menú")
-            }
 
-            if (showSalonForm) {
-                SalonForm(username = username, onSubmit = { salon = it; showSalonForm = false })
-            }
+        if (showMenuScreen) {
+            MenuScreen(
+                username = username,
+                salon = salon,
+                cocina = cocina,
+                dormitorio = dormitorio,
+                onShowSalonConsumo = { /* Implement logic to show salon consumption */ },
+                onShowCocinaConsumo = { /* Implement logic to show kitchen consumption */ },
+                onShowDormitorioConsumo = { /* Implement logic to show bedroom consumption */ },
+                onBack = { showMenuScreen = false }
+            )
+        } else {
+            Column(modifier = modifier.padding(16.dp)) {
+                AnimatedButton(text = "Agregar Salón", onClick = { showSalonForm = true })
+                Spacer(modifier = Modifier.height(8.dp))
+                AnimatedButton(text = "Agregar Cocina", onClick = { showCocinaForm = true })
+                Spacer(modifier = Modifier.height(8.dp))
+                AnimatedButton(text = "Agregar Dormitorio", onClick = { showDormitorioForm = true })
+                Spacer(modifier = Modifier.height(8.dp))
+                AnimatedButton(text = "Mostrar Menú", onClick = { showMenuScreen = true })
 
-            if (showCocinaForm) {
-                CocinaForm(username = username, onSubmit = { cocina = it; showCocinaForm = false })
-            }
+                if (showSalonForm) {
+                    SalonForm(username = username, onSubmit = { salon = it; showSalonForm = false })
+                }
 
-            if (showDormitorioForm) {
-                DormitorioForm(username = username, onSubmit = { dormitorio = it; showDormitorioForm = false })
+                if (showCocinaForm) {
+                    CocinaForm(username = username, onSubmit = { cocina = it; showCocinaForm = false })
+                }
+
+                if (showDormitorioForm) {
+                    DormitorioForm(username = username, onSubmit = { dormitorio = it; showDormitorioForm = false })
+                }
             }
         }
     }
