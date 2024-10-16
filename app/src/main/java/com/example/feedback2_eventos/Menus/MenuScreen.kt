@@ -6,6 +6,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.feedback2_eventos.AnimatedButton
 import com.example.feedback2_eventos.Cocina.Cocina
 import com.example.feedback2_eventos.Dormitorio.Dormitorio
 import com.example.feedback2_eventos.Salon.Salon
@@ -34,12 +35,15 @@ fun MenuScreen(
     var dormitorioEncendido by remember { mutableStateOf(dormitorio?.encendido ?: false) }
     var dormitorioConsumo by remember { mutableStateOf(dormitorio?.consumo() ?: 0.0) }
     var totalConsumo by remember { mutableStateOf(0.0) }
+    var initialConsumo by remember { mutableStateOf(0.0) }
 
+    // Fetch the initial total consumption once when the component is first mounted
     LaunchedEffect(Unit) {
         val usuarioRepository = UsuarioRepository()
         usuarioRepository.obtenerUsuario(username) { usuario: Usuario? ->
             if (usuario != null) {
-                totalConsumo = usuario.consumo + cocinaConsumo + salonConsumo + dormitorioConsumo
+                initialConsumo = usuario.consumo
+                totalConsumo = initialConsumo + cocinaConsumo + salonConsumo + dormitorioConsumo
             }
         }
     }
@@ -49,7 +53,7 @@ fun MenuScreen(
             delay(2000)
             val incremento = cocina?.calculateConsumoIncrement() ?: 0.0
             cocinaConsumo += incremento
-            totalConsumo += incremento
+            totalConsumo = initialConsumo + cocinaConsumo + salonConsumo + dormitorioConsumo
         }
     }
 
@@ -58,7 +62,7 @@ fun MenuScreen(
             delay(2000)
             val incremento = salon?.calculateConsumoIncrement() ?: 0.0
             salonConsumo += incremento
-            totalConsumo += incremento
+            totalConsumo = initialConsumo + cocinaConsumo + salonConsumo + dormitorioConsumo
         }
     }
 
@@ -67,7 +71,7 @@ fun MenuScreen(
             delay(2000)
             val incremento = dormitorio?.calculateConsumoIncrement() ?: 0.0
             dormitorioConsumo += incremento
-            totalConsumo += incremento
+            totalConsumo = initialConsumo + cocinaConsumo + salonConsumo + dormitorioConsumo
         }
     }
 
@@ -80,23 +84,23 @@ fun MenuScreen(
 
     LazyColumn(modifier = Modifier.padding(16.dp)) {
         item {
-            Button(onClick = onBack) {
-                Text("Volver")
-            }
-            Spacer(modifier = Modifier.height(8.dp))
+            AnimatedButton(text = "Volver", onClick = onBack)
+            Spacer(modifier = Modifier.height(16.dp))
 
-            Button(onClick = { showSalonConsumo = !showSalonConsumo }) {
-                Text("Mostrar Consumo del Salón")
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = { showCocinaConsumo = !showCocinaConsumo }) {
-                Text("Mostrar Consumo de la Cocina")
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = { showDormitorioConsumo = !showDormitorioConsumo }) {
-                Text("Mostrar Consumo del Dormitorio")
-            }
-            Spacer(modifier = Modifier.height(8.dp))
+            AnimatedButton(text = "Mostrar Consumo del Salón", onClick = {
+                showSalonConsumo = !showSalonConsumo
+            })
+            Spacer(modifier = Modifier.height(16.dp))
+
+            AnimatedButton(text = "Mostrar Consumo de la Cocina", onClick = {
+                showCocinaConsumo = !showCocinaConsumo
+            })
+            Spacer(modifier = Modifier.height(16.dp))
+
+            AnimatedButton(text = "Mostrar Consumo del Dormitorio", onClick = {
+                showDormitorioConsumo = !showDormitorioConsumo
+            })
+            Spacer(modifier = Modifier.height(16.dp))
 
             if (showSalonConsumo) {
                 Text("Consumo del Salón: $salonConsumo")
