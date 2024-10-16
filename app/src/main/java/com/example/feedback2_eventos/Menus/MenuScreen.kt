@@ -68,6 +68,13 @@ fun MenuScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        while (true) {
+            guardarConsumo(username, totalConsumo)
+            delay(2000) // Espera 2 segundos antes de volver a ejecutar
+        }
+    }
+
     LazyColumn(modifier = Modifier.padding(16.dp)) {
         item {
             Button(onClick = onBack) {
@@ -125,13 +132,6 @@ fun MenuScreen(
                 }) {
                     Text(if (dormitorioEncendido) "Apagar" else "Encender")
                 }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = {
-                guardarConsumo(username, totalConsumo)
-            }) {
-                Text("Guardar Consumo Total")
             }
         }
     }

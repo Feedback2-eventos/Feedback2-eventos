@@ -1,13 +1,18 @@
 package com.example.feedback2_eventos.Usuario
 
+import android.os.Handler
+import android.os.Looper
 import com.google.firebase.firestore.FirebaseFirestore
 import android.util.Log
 import com.example.feedback2_eventos.Cocina.Cocina
 import com.example.feedback2_eventos.Salon.Salon
 import com.example.feedback2_eventos.Dormitorio.Dormitorio
+import com.example.feedback2_eventos.MainActivity
 
 class UsuarioRepository {
     private val db = FirebaseFirestore.getInstance()
+    private val handler = Handler(Looper.getMainLooper())
+    private val checkInterval: Long = 10000 // Check every 5 seconds
 
     fun obtenerUsuario(username: String, callback: (Usuario?) -> Unit) {
         db.collection("usuarios")
@@ -91,18 +96,6 @@ class UsuarioRepository {
             }
             .addOnFailureListener { e ->
                 Log.e("UsuarioRepository", "Error al actualizar el consumo del usuario: $username", e)
-            }
-    }
-
-    fun actualizarConsumoSalon(username: String, salonConsumo: Double) {
-        db.collection("usuarios")
-            .document(username)
-            .update("salonConsumo", salonConsumo)
-            .addOnSuccessListener {
-                Log.d("UsuarioRepository", "Consumo del salón actualizado para el usuario: $username")
-            }
-            .addOnFailureListener { e ->
-                Log.e("UsuarioRepository", "Error al actualizar el consumo del salón del usuario: $username", e)
             }
     }
 
